@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrabble - Contador de Puntos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+</head>
+
+<body>
+    <!-- Vista de Configuración Inicial -->
+    <section id="setup-view" class="view">
+        <div class="setup-container">
+            <h1 class="app-title">🎲 Scrabble</h1>
+            <p class="subtitle">Contador de Puntos - Español México</p>
+
+            <div class="setup-card">
+                <h2>Configurar Partida</h2>
+
+                <!-- Jugadores guardados -->
+                <div id="savedPlayersSection" class="saved-players-section hidden">
+                    <h3>Jugadores Anteriores</h3>
+                    <p class="help-text-small">Haz clic en un nombre para agregarlo</p>
+                    <div id="savedPlayersList" class="saved-players-list"></div>
+                </div>
+
+                <div class="players-setup">
+                    <div class="player-input-group">
+                        <input type="text" id="player1" placeholder="Jugador 1" required>
+                        <input type="text" id="player2" placeholder="Jugador 2" required>
+                        <input type="text" id="player3" placeholder="Jugador 3 (opcional)">
+                        <input type="text" id="player4" placeholder="Jugador 4 (opcional)">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-large" id="btnStartGame">Iniciar Partida</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vista de Juego -->
+    <section id="game-view" class="view hidden">
+        <div class="game-container">
+            <!-- Header -->
+            <header class="game-header">
+                <div class="header-left">
+                    <h2>🎲 Scrabble</h2>
+                    <span class="turn-indicator" id="turnIndicator">Turno: <strong id="currentPlayer">-</strong></span>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-secondary btn-sm" id="btnEndGame">Finalizar Partida</button>
+                    <button class="btn btn-ghost btn-sm" id="btnNewGame">Nueva Partida</button>
+                </div>
+            </header>
+
+            <div class="game-layout">
+                <!-- Panel Izquierdo: Jugadores -->
+                <aside class="players-panel">
+                    <h3>Jugadores</h3>
+                    <div id="playersList" class="players-list"></div>
+
+                    <div class="game-stats">
+                        <h4>Estadísticas</h4>
+                        <div class="stat-item">
+                            <span>Jugadas totales:</span>
+                            <strong id="totalMoves">0</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Puntos en juego:</span>
+                            <strong id="totalPoints">0</strong>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Centro: Tablero -->
+                <main class="board-container">
+                    <div id="scrabbleBoard" class="scrabble-board"></div>
+
+                    <!-- Controles de Jugada -->
+                    <div class="move-controls">
+                        <div class="move-info">
+                            <p class="help-text">
+                                <strong>Instrucciones:</strong><br>
+                                1. Haz clic en la primera casilla de tu palabra<br>
+                                2. Ingresa la palabra completa<br>
+                                3. Haz clic en las fichas blancas (comodines) para marcarlas<br>
+                                4. Confirma tu jugada
+                            </p>
+                            <div class="score-preview">
+                                Puntos de esta jugada: <strong id="moveScore">0</strong>
+                            </div>
+                        </div>
+                        <div class="move-buttons">
+                            <button class="btn btn-secondary" id="btnClearMove">Limpiar</button>
+                            <button class="btn btn-warning" id="btnUndoMove">⟲ Deshacer</button>
+                            <button class="btn btn-primary" id="btnConfirmMove">Confirmar Jugada</button>
+                        </div>
+                        <div class="move-buttons-secondary">
+                            <button class="btn btn-ghost" id="btnExchangeTiles">🔄 Cambiar Fichas</button>
+                            <button class="btn btn-ghost" id="btnPassTurn">Pasar Turno</button>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Panel Derecho: Historial -->
+                <aside class="history-panel">
+                    <h3>Historial de Jugadas</h3>
+                    <div id="moveHistory" class="move-history"></div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Insertar Palabra -->
+    <div id="wordModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Insertar Palabra</h3>
+            <p class="modal-help">Escribe la palabra que formaste</p>
+
+            <input type="text" id="wordInput" class="word-input" placeholder="Ej: CASA" autocomplete="off">
+
+            <div class="direction-selector">
+                <label class="radio-label">
+                    <input type="radio" name="direction" value="H" checked>
+                    <span>Horizontal →</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="direction" value="V">
+                    <span>Vertical ↓</span>
+                </label>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="btnCancelWord">Cancelar</button>
+                <button class="btn btn-primary" id="btnInsertWord">Insertar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Finalizar Partida -->
+    <div id="endGameModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <h3>Finalizar Partida</h3>
+            <p class="modal-help">Ingresa las letras sobrantes de cada jugador</p>
+
+            <div id="remainingLettersForm" class="remaining-letters-form"></div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="btnCancelEnd">Cancelar</button>
+                <button class="btn btn-primary" id="btnConfirmEnd">Calcular Ganador</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Resultados -->
+    <div id="resultsModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <h3>🏆 Resultados Finales</h3>
+            <div id="finalResults" class="final-results"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="btnBackToSetup">Nueva Partida</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, get, push, onValue, update, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD6DCCWGFqPI2pTnn0_mnRtgeh8RutKOrw",
+            authDomain: "ibrascrabble.firebaseapp.com",
+            databaseURL: "https://ibrascrabble-default-rtdb.firebaseio.com",
+            projectId: "ibrascrabble",
+            storageBucket: "ibrascrabble.firebasestorage.app",
+            messagingSenderId: "1048439218766",
+            appId: "1:1048439218766:web:101e9708ff0a3870ac191f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Exponer Firebase globalmente para que app.js pueda usarlo
+        window.firebaseDB = {
+            database,
+            ref,
+            set,
+            get,
+            push,
+            onValue,
+            update,
+            remove
+        };
+    </script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
