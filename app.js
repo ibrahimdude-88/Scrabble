@@ -107,6 +107,141 @@ async function addPlayerToHistory(playerName) {
     }
 }
 
+// ==================== SISTEMA DE ESTADÍSTICAS ====================
+
+const STATS_KEY = 'scrabble_player_stats';
+
+async function getPlayerStats() {
+    try {
+        const fb = await waitForFirebase();
+        const statsRef = fb.ref(fb.database, 'playerStats');
+        const snapshot = await fb.get(statsRef);
+
+        if (snapshot.exists()) {
+            return snapshot.val() || {};
+        }
+
+        const localStats = localStorage.getItem(STATS_KEY);
+        return localStats ? JSON.parse(localStats) : {};
+    } catch (error) {
+        console.error('Error getting stats:', error);
+        const localStats = localStorage.getItem(STATS_KEY);
+        return localStats ? JSON.parse(localStats) : {};
+    }
+}
+
+async function savePlayerStats(stats) {
+    try {
+        const fb = await waitForFirebase();
+        const statsRef = fb.ref(fb.database, 'playerStats');
+        await fb.set(statsRef, stats);
+        localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    } catch (error) {
+        console.error('Error saving stats:', error);
+        localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    }
+}
+
+async function updatePlayerStats(playerName, gameScore, bestWordInGame, bestScoreInGame, isWinner) {
+    const stats = await getPlayerStats();
+
+    if (!stats[playerName]) {
+        stats[playerName] = {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            totalPoints: 0,
+            bestGameScore: 0,
+            bestWord: '',
+            bestWordScore: 0
+        };
+    }
+
+    const playerStats = stats[playerName];
+    playerStats.gamesPlayed++;
+    if (isWinner) playerStats.gamesWon++;
+    playerStats.totalPoints += gameScore;
+
+    if (gameScore > playerStats.bestGameScore) {
+        playerStats.bestGameScore = gameScore;
+    }
+
+    if (bestScoreInGame > playerStats.bestWordScore) {
+        playerStats.bestWordScore = bestScoreInGame;
+        playerStats.bestWord = bestWordInGame;
+    }
+
+    await savePlayerStats(stats);
+}
+
+async function clearPlayerStats() {
+    if (confirm('¿Estás seguro de que quieres eliminar todas las estadísticas? Esta acción no se puede deshacer.')) {
+        try {
+            const fb = await waitForFirebase();
+            const statsRef = fb.ref(fb.database, 'playerStats');
+            await fb.set(statsRef, {});
+            localStorage.removeItem(STATS_KEY);
+            alert('Estadísticas eliminadas correctamente');
+            await loadRankingUI();
+        } catch (error) {
+            console.error('Error clearing stats:', error);
+            localStorage.removeItem(STATS_KEY);
+            alert('Estadísticas eliminadas correctamente');
+            await loadRankingUI();
+        }
+    }
+}
+
+async function loadRankingUI() {
+    const stats = await getPlayerStats();
+    const rankingSection = document.getElementById('rankingSection');
+    const rankingTable = document.getElementById('rankingTable');
+
+    // Convertir stats a array y ordenar por victorias
+    const playersArray = Object.entries(stats).map(([name, data]) => ({
+        name,
+        ...data
+    })).sort((a, b) => {
+        if (b.gamesWon !== a.gamesWon) return b.gamesWon - a.gamesWon;
+        return b.totalPoints - a.totalPoints;
+    });
+
+    if (playersArray.length > 0) {
+        rankingSection.classList.remove('hidden');
+
+        let html = '<table class="ranking-table"><thead><tr>';
+        html += '<th>Pos</th>';
+        html += '<th>Jugador</th>';
+        html += '<th>Partidas</th>';
+        html += '<th>Victorias</th>';
+        html += '<th>Puntos Totales</th>';
+        html += '<th>Mejor Partida</th>';
+        html += '<th>Mejor Palabra</th>';
+        html += '</tr></thead><tbody>';
+
+        playersArray.forEach((player, index) => {
+            const position = index + 1;
+            let posClass = '';
+            if (position === 1) posClass = 'gold';
+            else if (position === 2) posClass = 'silver';
+            else if (position === 3) posClass = 'bronze';
+
+            html += '<tr>';
+            html += `<td><span class="rank-position ${posClass}">${position}°</span></td>`;
+            html += `<td><span class="player-name">${player.name}</span></td>`;
+            html += `<td><span class="stat-number">${player.gamesPlayed}</span></td>`;
+            html += `<td><span class="stat-number">${player.gamesWon}</span></td>`;
+            html += `<td><span class="stat-number">${player.totalPoints}</span></td>`;
+            html += `<td><span class="stat-number">${player.bestGameScore}</span></td>`;
+            html += `<td><span class="best-word">${player.bestWord || '-'}</span> <span class="stat-number">(${player.bestWordScore})</span></td>`;
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        rankingTable.innerHTML = html;
+    } else {
+        rankingSection.classList.add('hidden');
+    }
+}
 
 // ==================== FUNCIONES DE UTILIDAD ====================
 
@@ -172,6 +307,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function initSetupView() {
     // Cargar y mostrar jugadores guardados
     loadSavedPlayersUI();
+
+    // Cargar ranking
+    loadRankingUI();
+
+    // Event listeners para ranking
+    const btnToggleRanking = document.getElementById('btnToggleRanking');
+    const btnClearRanking = document.getElementById('btnClearRanking');
+    const rankingContent = document.getElementById('rankingContent');
+
+    btnToggleRanking.addEventListener('click', () => {
+        rankingContent.classList.toggle('hidden');
+        btnToggleRanking.textContent = rankingContent.classList.contains('hidden') ? 'Ver Ranking' : 'Ocultar Ranking';
+    });
+
+    btnClearRanking.addEventListener('click', clearPlayerStats);
 
     const btnStart = document.getElementById('btnStartGame');
 
@@ -749,10 +899,29 @@ function calculateFinalResults() {
     showFinalResults(results, totalTime);
 }
 
-function showFinalResults(results, totalTime) {
+async function showFinalResults(results, totalTime) {
     hideEndGameModal();
 
     const resultsEl = document.getElementById('finalResults');
+
+    // Guardar estadísticas de cada jugador
+    for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        const isWinner = i === 0;
+
+        // Encontrar la mejor palabra de este jugador en el historial
+        let bestWord = '';
+        let bestWordScore = 0;
+
+        gameState.moveHistory.forEach(move => {
+            if (move.player === result.name && move.score > bestWordScore && move.type !== 'exchange' && move.type !== 'undo') {
+                bestWordScore = move.score;
+                bestWord = move.word;
+            }
+        });
+
+        await updatePlayerStats(result.name, result.finalScore, bestWord, bestWordScore, isWinner);
+    }
 
     // Agregar información del tiempo total
     let html = `<div style="text-align: center; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-dark); border-radius: 8px;">

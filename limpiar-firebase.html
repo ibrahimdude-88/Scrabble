@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Firebase - Scrabble</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: #1e293b;
+            padding: 3rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #3b82f6;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .info {
+            background: #334155;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .log {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-item {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .log-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .log-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .log-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar Jugadores de Firebase</h1>
+
+        <div class="info">
+            <p><strong>Esta herramienta te permite:</strong></p>
+            <ul>
+                <li>Ver los jugadores actuales en Firebase</li>
+                <li>Limpiar y dejar solo a Irasema y Conrado</li>
+                <li>Limpiar todas las estadísticas (opcional)</li>
+            </ul>
+        </div>
+
+        <button class="btn" onclick="verJugadores()">📋 Ver Jugadores Actuales</button>
+        <button class="btn" onclick="limpiarJugadores()">✅ Dejar Solo Irasema y Conrado</button>
+        <button class="btn btn-danger" onclick="limpiarEstadisticas()">🗑️ Limpiar Todas las Estadísticas</button>
+
+        <div class="status" id="status"></div>
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlJvVoqhYMhCPgkW9vZUbWJqMBOPCbMqw",
+            authDomain: "ibrascrabble.firebaseapp.com",
+            databaseURL: "https://ibrascrabble-default-rtdb.firebaseio.com",
+            projectId: "ibrascrabble",
+            storageBucket: "ibrascrabble.firebasestorage.app",
+            messagingSenderId: "1055009838527",
+            appId: "1:1055009838527:web:5f2f8b5c8e9b0c6f8e9b0c"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log');
+            const item = document.createElement('div');
+            item.className = `log-item log-${type}`;
+            item.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(item);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function setStatus(message, color = '#3b82f6') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.style.color = color;
+        }
+
+        async function verJugadores() {
+            try {
+                setStatus('Consultando Firebase...', '#3b82f6');
+                addLog('Consultando jugadores guardados...', 'info');
+
+                const playersSnapshot = await database.ref('savedPlayers').once('value');
+                const players = playersSnapshot.val() || [];
+
+                addLog(`Jugadores encontrados: ${players.length}`, 'info');
+                players.forEach((player, index) => {
+                    addLog(`${index + 1}. ${player}`, 'info');
+                });
+
+                const statsSnapshot = await database.ref('playerStats').once('value');
+                const stats = statsSnapshot.val() || {};
+                const statsCount = Object.keys(stats).length;
+
+                addLog(`Estadísticas de ${statsCount} jugadores encontradas`, 'info');
+                Object.keys(stats).forEach(player => {
+                    const data = stats[player];
+                    addLog(`  ${player}: ${data.gamesPlayed} partidas, ${data.gamesWon} victorias`, 'info');
+                });
+
+                setStatus(`${players.length} jugadores y ${statsCount} estadísticas`, '#22c55e');
+            } catch (error) {
+                addLog(`Error: ${error.message}`, 'error');
+                setStatus('Error al consultar', '#ef4444');
+            }
+        }
+
+        async function limpiarJugadores() {
+            if (!confirm('¿Estás seguro de que quieres dejar solo a Irasema y Conrado?\n\nEsto eliminará todos los demás jugadores de la lista.')) {
+                return;
+            }
+
+            try {
+                setStatus('Limpiando jugadores...', '#3b82f6');
+                addLog('Iniciando limpieza de jugadores...', 'info');
+
+                // Ver jugadores actuales
+                const playersSnapshot = await database.ref('savedPlayers').once('value');
+                const currentPlayers = playersSnapshot.val() || [];
+                addLog(`Jugadores actuales: ${currentPlayers.join(', ')}`, 'info');
+
+                // Establecer solo Irasema y Conrado
+                const newPlayers = ['Irasema', 'Conrado'];
+                await database.ref('savedPlayers').set(newPlayers);
+
+                addLog('✅ Jugadores actualizados correctamente', 'success');
+                addLog(`Nuevos jugadores: ${newPlayers.join(', ')}`, 'success');
+
+                // También limpiar localStorage
+                localStorage.setItem('scrabble_saved_players', JSON.stringify(newPlayers));
+                addLog('✅ LocalStorage actualizado', 'success');
+
+                setStatus('¡Limpieza completada!', '#22c55e');
+
+                setTimeout(() => {
+                    addLog('Puedes cerrar esta ventana y recargar tu aplicación', 'info');
+                }, 1000);
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                setStatus('Error al limpiar', '#ef4444');
+            }
+        }
+
+        async function limpiarEstadisticas() {
+            if (!confirm('¿Estás seguro de que quieres eliminar TODAS las estadísticas?\n\nEsta acción NO se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                setStatus('Limpiando estadísticas...', '#3b82f6');
+                addLog('Iniciando limpieza de estadísticas...', 'info');
+
+                // Ver estadísticas actuales
+                const statsSnapshot = await database.ref('playerStats').once('value');
+                const currentStats = statsSnapshot.val() || {};
+                const count = Object.keys(currentStats).length;
+                addLog(`Estadísticas actuales: ${count} jugadores`, 'info');
+
+                // Limpiar todas las estadísticas
+                await database.ref('playerStats').set({});
+
+                addLog('✅ Estadísticas eliminadas correctamente', 'success');
+
+                // También limpiar localStorage
+                localStorage.removeItem('scrabble_player_stats');
+                addLog('✅ LocalStorage limpiado', 'success');
+
+                setStatus('¡Estadísticas eliminadas!', '#22c55e');
+
+                setTimeout(() => {
+                    addLog('Puedes cerrar esta ventana y recargar tu aplicación', 'info');
+                }, 1000);
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                setStatus('Error al limpiar', '#ef4444');
+            }
+        }
+
+        // Log inicial
+        addLog('Herramienta de limpieza cargada correctamente', 'success');
+        addLog('Haz clic en "Ver Jugadores Actuales" para comenzar', 'info');
+    </script>
+</body>
+
+</html>

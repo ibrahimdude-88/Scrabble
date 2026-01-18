@@ -221,6 +221,168 @@ body {
     border-color: var(--success);
 }
 
+/* ========== RANKING DE JUGADORES ========== */
+.ranking-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--bg-panel);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.ranking-section h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+}
+
+.ranking-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.ranking-content {
+    overflow-x: auto;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ranking-table thead {
+    background: var(--primary);
+}
+
+.ranking-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.ranking-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.ranking-table tbody tr:hover {
+    background: var(--bg-panel);
+}
+
+.ranking-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.rank-position {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.rank-position.gold {
+    color: #ffd700;
+}
+
+.rank-position.silver {
+    color: #c0c0c0;
+}
+
+.rank-position.bronze {
+    color: #cd7f32;
+}
+
+.player-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.stat-number {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.best-word {
+    font-family: 'Courier New', monospace;
+    background: var(--bg-panel);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* ========== FOOTER ========== */
+.app-footer {
+    margin-top: 3rem;
+    padding: 2rem 1rem;
+    background: var(--bg-panel);
+    border-top: 2px solid var(--border);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.footer-credits {
+    text-align: center;
+}
+
+.designed-by {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.designed-by strong {
+    color: var(--primary);
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.footer-tech {
+    text-align: center;
+}
+
+.tech-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.tech-badge {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.tech-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
 /* ========== VISTA DE JUEGO ========== */
 .game-container {
     max-width: 1600px;
