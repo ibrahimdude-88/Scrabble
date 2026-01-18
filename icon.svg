@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Fondo azul oscuro -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a574;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#c89858;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b8864b;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="1024" height="1024" fill="url(#bgGradient)"/>
+  
+  <!-- Ficha de Scrabble con sombra -->
+  <g filter="url(#shadow)">
+    <!-- Ficha principal -->
+    <rect x="212" y="212" width="600" height="600" rx="40" fill="url(#woodGradient)"/>
+    
+    <!-- Borde interno -->
+    <rect x="222" y="222" width="580" height="580" rx="35" fill="none" stroke="#a67c52" stroke-width="3"/>
+    
+    <!-- Letra S -->
+    <text x="512" y="620" 
+          font-family="Georgia, serif" 
+          font-size="420" 
+          font-weight="bold" 
+          fill="#1a1a1a" 
+          text-anchor="middle">S</text>
+    
+    <!-- Número 1 -->
+    <text x="720" y="740" 
+          font-family="Georgia, serif" 
+          font-size="120" 
+          font-weight="bold" 
+          fill="#1a1a1a" 
+          text-anchor="middle">1</text>
+  </g>
+</svg>
