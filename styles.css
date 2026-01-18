@@ -321,21 +321,86 @@ body {
 
 /* Responsive para ranking */
 @media (max-width: 768px) {
-    .ranking-table {
-        font-size: 0.85rem;
-    }
-
-    .ranking-table th,
-    .ranking-table td {
-        padding: 0.625rem 0.5rem;
+    .ranking-section {
+        padding: 1rem;
+        margin-top: 1.5rem;
+        overflow-x: auto;
     }
 
     .ranking-section h2 {
         font-size: 1.25rem;
     }
 
-    .best-word {
+    .ranking-table {
         font-size: 0.75rem;
+        min-width: 600px;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.7rem;
+    }
+
+    .best-word {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+    }
+
+    .rank-position {
+        font-size: 0.85rem;
+    }
+
+    .player-name {
+        font-size: 0.8rem;
+    }
+
+    .stat-number {
+        font-size: 0.75rem;
+    }
+}
+
+/* iPhone y móviles pequeños */
+@media (max-width: 430px) {
+    .ranking-section {
+        padding: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .ranking-section h2 {
+        font-size: 1.125rem;
+    }
+
+    .ranking-table {
+        font-size: 0.65rem;
+        min-width: 500px;
+    }
+
+    .ranking-table th {
+        padding: 0.4rem 0.2rem;
+        font-size: 0.6rem;
+    }
+
+    .ranking-table td {
+        padding: 0.4rem 0.2rem;
+        font-size: 0.65rem;
+    }
+
+    .rank-position {
+        font-size: 0.75rem;
+    }
+
+    .player-name {
+        font-size: 0.7rem;
+    }
+
+    .stat-number {
+        font-size: 0.65rem;
+    }
+
+    .best-word {
+        font-size: 0.55rem;
+        padding: 0.1rem 0.2rem;
     }
 }
 
