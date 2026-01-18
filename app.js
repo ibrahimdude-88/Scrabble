@@ -311,18 +311,6 @@ function initSetupView() {
     // Cargar ranking
     loadRankingUI();
 
-    // Event listeners para ranking
-    const btnToggleRanking = document.getElementById('btnToggleRanking');
-    const btnClearRanking = document.getElementById('btnClearRanking');
-    const rankingContent = document.getElementById('rankingContent');
-
-    btnToggleRanking.addEventListener('click', () => {
-        rankingContent.classList.toggle('hidden');
-        btnToggleRanking.textContent = rankingContent.classList.contains('hidden') ? 'Ver Ranking' : 'Ocultar Ranking';
-    });
-
-    btnClearRanking.addEventListener('click', clearPlayerStats);
-
     const btnStart = document.getElementById('btnStartGame');
 
     btnStart.addEventListener('click', async () => {

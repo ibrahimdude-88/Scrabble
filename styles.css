@@ -223,7 +223,7 @@ body {
 
 /* ========== RANKING DE JUGADORES ========== */
 .ranking-section {
-    margin-top: 3rem;
+    margin-top: 2rem;
     padding: 2rem;
     background: var(--bg-panel);
     border-radius: 12px;
@@ -234,17 +234,7 @@ body {
     text-align: center;
     margin-bottom: 1.5rem;
     color: var(--text);
-}
-
-.ranking-controls {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-.ranking-content {
-    overflow-x: auto;
+    font-size: 1.5rem;
 }
 
 .ranking-table {
@@ -256,26 +246,31 @@ body {
 }
 
 .ranking-table thead {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
 }
 
 .ranking-table th {
-    padding: 1rem;
+    padding: 0.875rem;
     text-align: left;
     font-weight: 600;
     color: white;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .ranking-table td {
-    padding: 1rem;
+    padding: 0.875rem;
     border-bottom: 1px solid var(--border);
     color: var(--text);
 }
 
+.ranking-table tbody tr {
+    transition: background 0.2s ease;
+}
+
 .ranking-table tbody tr:hover {
-    background: var(--bg-panel);
+    background: rgba(59, 130, 246, 0.1);
 }
 
 .ranking-table tbody tr:last-child td {
@@ -284,7 +279,10 @@ body {
 
 .rank-position {
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .rank-position.gold {
@@ -301,20 +299,44 @@ body {
 
 .player-name {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    color: var(--text);
 }
 
 .stat-number {
     font-weight: 700;
     color: var(--primary);
+    font-size: 0.95rem;
 }
 
 .best-word {
     font-family: 'Courier New', monospace;
-    background: var(--bg-panel);
+    background: rgba(59, 130, 246, 0.2);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     font-weight: 600;
+    color: var(--text);
+    font-size: 0.875rem;
+}
+
+/* Responsive para ranking */
+@media (max-width: 768px) {
+    .ranking-table {
+        font-size: 0.85rem;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.625rem 0.5rem;
+    }
+
+    .ranking-section h2 {
+        font-size: 1.25rem;
+    }
+
+    .best-word {
+        font-size: 0.75rem;
+    }
 }
 
 /* ========== FOOTER ========== */
