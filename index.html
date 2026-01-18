@@ -13,13 +13,23 @@
     <meta name="apple-mobile-web-app-title" content="Scrabble">
     <meta name="format-detection" content="telephone=no">
 
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
 
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <!-- Apple Touch Icons - Diferentes tamaños -->
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icon.png">
+
+    <!-- Android/Chrome -->
+    <link rel="icon" sizes="192x192" href="icon.png">
+    <link rel="icon" sizes="512x512" href="icon.png">
 </head>
 
 <body>
