@@ -35,7 +35,9 @@ const gameState = {
     targetCell: null,
     lastInsertedWord: '', // Palabra completa insertada
     boardHistory: [], // Historial de estados del tablero para deshacer
-    scoreHistory: [] // Historial de puntuaciones para deshacer
+    scoreHistory: [], // Historial de puntuaciones para deshacer
+    startTime: null, // Tiempo de inicio de la partida
+    timerInterval: null // Intervalo del cronómetro
 };
 
 // LocalStorage/Firebase para jugadores guardados
@@ -247,11 +249,56 @@ function startGame() {
     document.getElementById('setup-view').classList.add('hidden');
     document.getElementById('game-view').classList.remove('hidden');
 
+    // Iniciar cronómetro
+    startTimer();
+
     // Inicializar tablero
     renderBoard();
     renderPlayers();
     updateTurnIndicator();
     updateStats();
+}
+
+// ==================== CRONÓMETRO ====================
+
+function startTimer() {
+    gameState.startTime = Date.now();
+    gameState.timerInterval = setInterval(updateTimer, 1000);
+    updateTimer(); // Actualizar inmediatamente
+}
+
+function stopTimer() {
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
+}
+
+function updateTimer() {
+    if (!gameState.startTime) return;
+
+    const elapsed = Date.now() - gameState.startTime;
+    const formatted = formatElapsedTime(elapsed);
+
+    const timerEl = document.getElementById('gameTimer');
+    if (timerEl) {
+        timerEl.textContent = formatted;
+    }
+}
+
+function formatElapsedTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function getElapsedTime() {
+    if (!gameState.startTime) return '00:00:00';
+    const elapsed = Date.now() - gameState.startTime;
+    return formatElapsedTime(elapsed);
 }
 
 // ==================== RENDERIZADO ====================
@@ -663,6 +710,10 @@ function hideEndGameModal() {
 }
 
 function calculateFinalResults() {
+    // Detener cronómetro
+    stopTimer();
+    const totalTime = getElapsedTime();
+
     const results = [];
     let totalRemainingPoints = 0;
 
@@ -695,15 +746,23 @@ function calculateFinalResults() {
         results[0].finalScore += totalRemainingPoints - results[0].remainingPoints;
     }
 
-    showFinalResults(results);
+    showFinalResults(results, totalTime);
 }
 
-function showFinalResults(results) {
+function showFinalResults(results, totalTime) {
     hideEndGameModal();
 
     const resultsEl = document.getElementById('finalResults');
 
-    let html = '<table class="results-table"><thead><tr>';
+    // Agregar información del tiempo total
+    let html = `<div style="text-align: center; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-dark); border-radius: 8px;">
+        <h3 style="margin-bottom: 0.5rem; color: var(--text-muted);">Tiempo Total de Partida</h3>
+        <div style="font-family: 'Courier New', monospace; font-size: 2rem; font-weight: 700; color: var(--warning);">
+            ⏱️ ${totalTime}
+        </div>
+    </div>`;
+
+    html += '<table class="results-table"><thead><tr>';
     html += '<th>Posición</th>';
     html += '<th>Jugador</th>';
     html += '<th>Puntos de Juego</th>';

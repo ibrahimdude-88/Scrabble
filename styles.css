@@ -263,6 +263,34 @@ body {
     gap: 1rem;
 }
 
+.header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-display {
+    background: var(--bg-dark);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.timer-icon {
+    font-size: 1.5rem;
+}
+
+.timer-time {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--warning);
+    letter-spacing: 0.1em;
+}
+
 .game-layout {
     display: grid;
     grid-template-columns: 280px 1fr 320px;
@@ -752,32 +780,409 @@ body {
 }
 
 /* ========== RESPONSIVE ========== */
+
+/* Tablet y iPad (landscape y portrait) */
 @media (max-width: 1200px) {
     .game-layout {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .players-panel,
     .history-panel {
         max-height: none;
     }
+
+    .board-container {
+        order: -1;
+        /* Tablero primero en móvil */
+    }
 }
 
+/* iPad Portrait y tablets medianas */
+@media (max-width: 1024px) {
+    .game-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .header-left,
+    .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-right {
+        flex-wrap: wrap;
+    }
+
+    /* Cronómetro en tablet */
+    .timer-display {
+        padding: 0.5rem 1rem;
+    }
+
+    .timer-time {
+        font-size: 1.25rem;
+    }
+}
+
+/* Móviles grandes y iPhone Plus/Pro Max */
 @media (max-width: 768px) {
     .view {
         padding: 1rem;
     }
 
+    /* Tablero optimizado para móvil */
     .scrabble-board {
         gap: 1px;
         padding: 2px;
+        max-width: 100%;
+        font-size: 0.6rem;
     }
 
     .cell {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
+        min-height: 20px;
     }
 
     .tile {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+    }
+
+    .tile-score {
+        font-size: 0.4rem;
+    }
+
+    /* Controles de jugada */
+    .move-controls {
+        padding: 1rem;
+    }
+
+    .move-buttons,
+    .move-buttons-secondary {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .move-buttons .btn,
+    .move-buttons-secondary .btn {
+        width: 100%;
+        padding: 0.875rem;
+        font-size: 1rem;
+    }
+
+    /* Modales */
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .word-input {
+        font-size: 1.25rem;
+        padding: 0.875rem;
+    }
+
+    /* Header del juego */
+    .game-header {
+        padding: 1rem;
+    }
+
+    .game-header h2 {
+        font-size: 1.25rem;
+    }
+
+    /* Paneles laterales */
+    .players-panel,
+    .history-panel {
+        padding: 1rem;
+    }
+
+    /* Setup */
+    .setup-container {
+        padding: 0;
+    }
+
+    .setup-card {
+        padding: 1.5rem;
+    }
+
+    .app-title {
+        font-size: 2rem;
+    }
+
+    /* Cronómetro en móvil */
+    .timer-display {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .timer-icon {
+        font-size: 1.25rem;
+    }
+
+    .timer-time {
+        font-size: 1.125rem;
+    }
+}
+
+/* iPhone estándar y móviles pequeños */
+@media (max-width: 430px) {
+    .view {
+        padding: 0.5rem;
+    }
+
+    /* Tablero más compacto */
+    .scrabble-board {
+        gap: 0.5px;
+        padding: 1px;
+        font-size: 0.5rem;
+    }
+
+    .cell {
+        font-size: 0.4rem;
+        min-height: 18px;
+    }
+
+    .tile {
+        font-size: 0.65rem;
+    }
+
+    .tile-score {
+        font-size: 0.35rem;
+        bottom: 1px;
+        right: 1px;
+    }
+
+    /* Botones más grandes para táctil */
+    .btn {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+        /* Tamaño mínimo táctil de Apple */
+    }
+
+    .btn-sm {
+        padding: 0.625rem 0.875rem;
+        min-height: 38px;
+    }
+
+    /* Header compacto */
+    .game-header {
+        padding: 0.75rem;
+    }
+
+    .turn-indicator {
+        font-size: 0.875rem;
+    }
+
+    /* Controles */
+    .move-controls {
+        padding: 0.75rem;
+    }
+
+    .help-text {
+        font-size: 0.8rem;
+    }
+
+    .score-preview {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .score-preview strong {
+        font-size: 1.25rem;
+    }
+
+    /* Modales */
+    .modal-content {
+        padding: 1rem;
+    }
+
+    .modal-content h3 {
+        font-size: 1.25rem;
+    }
+
+    .word-input {
+        font-size: 1.125rem;
+        padding: 0.75rem;
+    }
+
+    /* Setup */
+    .app-title {
+        font-size: 1.75rem;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+    }
+
+    .setup-card {
+        padding: 1rem;
+    }
+
+    .player-input-group input {
+        padding: 0.875rem;
+        font-size: 0.95rem;
+    }
+
+    /* Historial */
+    .history-item {
+        padding: 0.75rem;
+    }
+
+    .history-player,
+    .history-score {
+        font-size: 0.95rem;
+    }
+
+    .history-word {
+        font-size: 0.8rem;
+    }
+}
+
+/* iPhone SE y móviles muy pequeños */
+@media (max-width: 375px) {
+    .scrabble-board {
+        font-size: 0.45rem;
+    }
+
+    .cell {
+        font-size: 0.35rem;
+        min-height: 16px;
+    }
+
+    .tile {
+        font-size: 0.6rem;
+    }
+
+    .tile-score {
+        font-size: 0.3rem;
+    }
+
+    .app-title {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+}
+
+/* iPad específico (portrait) */
+@media (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
+    .scrabble-board {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cell {
+        font-size: 0.65rem;
+    }
+
+    .tile {
+        font-size: 0.95rem;
+    }
+}
+
+/* iPad específico (landscape) */
+@media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+    .game-layout {
+        grid-template-columns: 250px 1fr 280px;
+    }
+
+    .scrabble-board {
+        max-width: 650px;
+    }
+}
+
+/* Mejoras de accesibilidad táctil para iOS */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Aumentar área táctil */
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .cell {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .saved-player-chip {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Desactivar hover en táctil */
+    .btn:hover,
+    .cell:hover,
+    .saved-player-chip:hover {
+        transform: none;
+    }
+
+    /* Activar efectos en tap */
+    .btn:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+
+    .cell:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Prevenir zoom en inputs en iOS */
+@media (max-width: 768px) {
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+        /* Evita zoom automático en iOS */
+    }
+}
+
+/* Safe area para iPhone con notch */
+@supports (padding: max(0px)) {
+    .view {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .game-header {
+        padding-left: max(1.5rem, env(safe-area-inset-left));
+        padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+}
+
+/* Orientación landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .view {
+        padding: 0.5rem;
+    }
+
+    .game-header {
+        padding: 0.5rem;
+    }
+
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .scrabble-board {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+
+    .players-panel,
+    .history-panel {
+        display: none;
+        /* Ocultar en landscape muy pequeño */
     }
 }

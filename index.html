@@ -3,10 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Scrabble - Contador de Puntos</title>
+
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Scrabble">
+    <meta name="format-detection" content="telephone=no">
+
     <link rel="stylesheet" href="styles.css">
     <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
 </head>
 
@@ -49,6 +61,12 @@
                 <div class="header-left">
                     <h2>🎲 Scrabble</h2>
                     <span class="turn-indicator" id="turnIndicator">Turno: <strong id="currentPlayer">-</strong></span>
+                </div>
+                <div class="header-center">
+                    <div class="timer-display">
+                        <span class="timer-icon">⏱️</span>
+                        <span class="timer-time" id="gameTimer">00:00:00</span>
+                    </div>
                 </div>
                 <div class="header-right">
                     <button class="btn btn-secondary btn-sm" id="btnEndGame">Finalizar Partida</button>
